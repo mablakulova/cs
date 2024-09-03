@@ -12,4 +12,6 @@ int main(void)
     float float1 = 123.4f;
     double double1 = 123E30;
     long double double2 = 1234567.89123L;
+
+    return 0;
 }
