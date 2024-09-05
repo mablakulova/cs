@@ -20,6 +20,8 @@ int main(void)
     squeeze(s1, s2);
 
     printf("\nAfter squeezing s1: %s\n", s1);
+
+    return 0;
 }
 
 int get_line(char items[], int size) 
