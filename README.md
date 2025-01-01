@@ -1,3 +1,3 @@
-# C Programming Notes and Exercises
+# Computer Science Notes and Exercises
 
-This repository is a collection of notes, exercises, and practice problems that I have compiled while learning the C programming language.
+This repository contains resources and exercises from my learning journey in computer science.
