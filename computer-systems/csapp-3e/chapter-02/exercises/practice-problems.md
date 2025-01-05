@@ -48,12 +48,12 @@ and hexadecimal values of different byte patterns:
 - ?           ?                0xF5
 
 Solution:
-1. - Decimal to binary: 158 = 79 × 2 + 0 (0), 79 = 39 × 2 + 1 (1), 39 = 19 × 2 + 1 (1), 19 = 9 × 2 + 1 (1), 9 = 4 × 2 + 1 (1), 2 = 2 × 1 + 0 (0); 158₁₀ = 011110₂.
-   - Binary to hexadecimal: 011110₂ = 0001-1110 = 0x1E₁₆.
-2. - Decimal to binary: 76 = 38 × 2 + 0 (0), 38 = 19 × 2 + 0 (0), 19 = 9 × 2 + 1 (1), 9 = 4 × 2 + 1 (1), 4 = 2 × 2 + 0 (0); 76₁₀ = 01100₂.
-   - Binary to hexadecimal: 01100₂ = 1100 = 0xC₁₆.
-3. - Decimal to binary: 145 = 72 × 2 + 1 (1), 72 = 36 × 2 + 0 (0), 36 = 18 × 2 + 0 (0), 18 = 9 × 2 + 0 (0), 9 = 4 × 2 + 1 (1), 4 = 2 × 2 + 0 (0); 145₁₀ = 010001₂.
-   - Binary to hexadecimal: 010001₂ = 0001-0001 = 0x11₁₆.
+1. - Decimal to binary: 158 = 79 × 2 + 0 (0), 79 = 39 × 2 + 1 (1), 39 = 19 × 2 + 1 (1), 19 = 9 × 2 + 1 (1), 9 = 4 × 2 + 1 (1), 4 = 2 × 2 + 0 (0), 2 = 2 × 1 + 0 (0); 158₁₀ = 10011110₂.
+   - Binary to hexadecimal: 10011110₂ = 1001-1110 = 0x9E₁₆.
+2. - Decimal to binary: 76 = 38 × 2 + 0 (0), 38 = 19 × 2 + 0 (0), 19 = 9 × 2 + 1 (1), 9 = 4 × 2 + 1 (1), 4 = 2 × 2 + 0 (0), 2 = 2 × 1 + 0 (0);  76₁₀ = 1001100₂.
+   - Binary to hexadecimal: 1001100₂ = 0100-1100 = 0x4C₁₆.
+3. - Decimal to binary: 145 = 72 × 2 + 1 (1), 72 = 36 × 2 + 0 (0), 36 = 18 × 2 + 0 (0), 18 = 9 × 2 + 0 (0), 9 = 4 × 2 + 1 (1), 4 = 2 × 2 + 0 (0), 2 = 2 × 1 + 0 (0); 145₁₀ = 10010001₂.
+   - Binary to hexadecimal: 10010001₂ = 1001-0001 = 0x91₁₆.
 4. - Binary to decimal: 10101110₂ = 1 × 2^7 + 0 × 2^6 +  1 × 2^5 + 0 × 2^4 + 1 × 2^3 + 1 × 2^2 + 1 × 2^1 + 0 × 2^0 = 174₁₀.
    - Binary to hexadecimal: 10101110₂ = 1010-1110 = 0xAE₁₆.
 5. - Binary to decimal: 00111100₂ = 0 × 2^7 + 0 × 2^6 + 1 × 2^5 + 1 × 2^4 + 1 × 2^3 + 1 × 2^2 + 0 × 2^1 + 0 × 2^0 = 60₁₀.
@@ -80,3 +80,159 @@ Solution:
 - B. 0x605C − 0x20 = 0x605C − 0x0020 = 0x603C.
 - C. 0x605C + 32 = 0x605C + 0x0020 = 0x607C.
 - D. 0x60FA − 0x605C = 0x9E.
+
+## P-P 2.5
+Consider the following three calls to show_bytes:
+```c
+int a = 0x12345678;
+byte_pointer ap = (byte_pointer) &a;
+show_bytes(ap, 1); /* A. */
+show_bytes(ap, 2); /* B. */
+show_bytes(ap, 3); /* C. */
+```
+Indicate the values that will be printed by each call on a little-endian machine and on a big-endian machine:
+- A. Little endian:       Big endian:
+- B. Little endian:       Big endian:
+- C. Little endian:       Big endian:
+
+Solution:
+- A. Little endian: 78          Big endian: 12
+- B. Little endian: 78 56       Big endian: 12 34
+- C. Little endian: 78 56 34    Big endian: 12 34 56
+
+## P-P 2.6
+Using `show_int` and `show_float`, we determine that the integer 2607352 has hexadecimal representation 0x0027C8F8, while the floating-point number 3510593.0 has hexadecimal representation 0x4A1F23E0.
+- A. Write the binary representations of these two hexadecimal values.
+- B. Shift these two strings relative to one another to maximize the number of
+matching bits. How many bits match?
+- C. What parts of the strings do not match?
+
+Solution:
+- A. 0x0027C8F8₁₆ = 0010-0111-1100-1000-1111-1000 = 1001111100100011111000₂; 0x4A1F23E0₁₆ = 0100-1010-0001-1111-0010-0011-1110-0000 = 1001010000111110010001111100000₂;
+
+## P-P 2.7
+What would be printed as a result of the following call to `show_bytes`?
+```c
+const char *m = "mnopqr";
+show_bytes((byte_pointer) m, strlen(m));
+```
+Note that letters ‘a’ through ‘z’ have ASCII codes 0x61 through 0x7A.
+
+Solution: "mnopqr" => 6D 6E 6F 70 71 72
+
+## P-P 2.8
+Fill in the following table showing the results of evaluating Boolean operations on bit vectors. a = [01001110], b = [11100001]
+
+Solution: ~a = 10110001; ~b = 00011110; a & b = 01000000; a | b = 11101111; a ^ b = 10101111;
+
+## P-P 2.9
+Solution: 
+- A. 
+   - 1) Black - [000], complement: ~[000] = [111] -> White; 
+   - 2) Blue - [001], ~[001] = [110] -> Yellow;
+   - 3) Green - [010], ~[010] = [101] -> Magenta;
+   - 4) Cyan - [011], ~[011] = [100] -> Red;
+   - 5) Red - [100], ~[100] = [011] -> Cyan;
+   - 6) Magenta - [101], ~[101] = [010] -> Green;
+   - 7) Yellow - [110], ~[110] = [001] -> Blue;
+   - 8) White - [111], ~[111] = [000] -> Black;
+
+- B. 
+   - Blue | Green = [001] | [010] = [011] -> Cyan;
+   - Yellow & Cyan = [110] & [011] = [010] -> Green;
+   - Red ^ Magenta = [100] ^ [101] = [001] -> Blue;
+
+## P-P 2.10
+Solution: 
+- Step 1: *x = a; *y = a ^ b;
+- Step 2: *x = a ^ (a ^ b) = (a ^ a) ^ b = 0 ^ b = b; *y = a ^ b;
+- Step 3: *x = b; *y = b ^ (a ^ b) = (b ^ b) ^ a = a;
+
+## P-P 2.11
+Solution:
+- A. For an array of odd length cnt = 2k + 1, the final first = last = k;
+- B. When calling the function inplace_swap with the *x, *y which references the same location, in Step 1 we get 0 for both, and in the next steps the values keep the same.
+- C. After changing `first <= last` to `first < last`, we skip swapping the final middle element with itself.
+
+## P-P 2.12
+Solution:
+- A. 
+```c
+int x = 0x87654321;
+int mask = 0xFF;
+printf("result = 0x%X\n", x & mask);
+```
+- B.
+```c
+int x = 0x87654321;
+int mask = 0xFF;
+printf("result = 0x%X\n", x ^ ~mask);
+```
+- C.
+```c
+int x = 0x87654321;
+int mask = 0xFF;
+printf("result = 0x%X\n", x | mask);
+```
+
+## P-P 2.13
+Solution:
+```c
+#include <stdio.h>
+
+int bis(int x, int m);
+int bic(int x, int m);
+int bool_or(int x, int y);
+int bool_xor(int x, int y);
+
+int main()
+{
+    int x = 0b1110, y = 0b1101;
+    printf("%d\n", bool_or(x, y) == (x | y));
+    printf("%d\n", bool_xor(x, y) == (x ^ y));
+
+    return 0;
+}
+
+int bis(int x, int m)
+{
+    return x | m;
+}
+
+int bic(int x, int m)
+{
+    return x & ~m;
+}
+
+int bool_or(int x, int y)
+{
+    int result = bis(x, y);
+    return result;
+}
+
+int bool_xor(int x, int y)
+{
+    /* x ^ y = (x & ~y) | (~x & y) */
+    int result = bis(bic(x, y), bic(y, x));
+    return result;
+}
+```
+
+## P-P 2.14
+Suppose that a and b have byte values 0x55 and 0x46, respectively. Fill in the following table indicating the byte values of the different C expressions.
+
+Solution: a = 0x55 = 01010101, b = 0x46 = 01000110; 
+- a & b = 01010101 & 01000110 = 01000100 = 0x44;
+- a | b = 01010101 | 01000110 = 01010111 = 0x57;
+- ~a | ~b = ~01010101 | ~01000110 = 10101010 | 10111001 = 10111011 = 0xBB;
+- a & !b = 0x55 & !0x46 = 0x55 & 0x00 = 0x00;
+- a && b = 0x55 && 0x46 = 0x01;
+- a || b = 0x55 || 0x46 = 0x01;
+- !a || !b = !0x55 || !0x46 = 0x00 || 0x00 = 0x00;
+- a && ~b = 0x55 && ~0x46 = 0x01;
+
+## P-P 2.15
+Using only bit-level and logical operations, write a C expression that is equivalent
+to x == y. In other words, it will return 1 when x and y are equal and 0 otherwise.
+
+Solution: x ^ y = 0, for x = y, !(x ^ y) so is equivalent to x == y.
