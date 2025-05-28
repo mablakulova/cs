@@ -196,3 +196,87 @@ return-type function-name (parameter declarations, if any)
       clean up the mess
   ```
 - A `label` has the same form as a variable name, and is followed by a colon.
+## Chapter 4 Functions and Program Structure
+Functions break large computing tasks into smaller ones, and enable people to build on what others have done instead of starting over from scratch. Appropriate functions hide details of operation from parts of the program that don't need to know about them, thus clarifying the whole, and easing the pain of making changes.
+### 4.1 Basics of Functions
+- Function definition:
+```
+return-type function-name(argument declarations)
+{
+   declarations
+   statements
+}
+```
+- The functions can occur in any order in the source file, and the source program can be split into multiple files, so long as no function is split.
+- The mechanics of how to compile and load a C program that resides on multiple source files vary from one system to the next.
+### 4.2 Functions Returning Non-Integers
+- The function `atof` must be declared and defined consistently. If `atof` itself and the call to it in `main` have inconsistent types in the same source file, the error will be detected by the compiler. But if (as is more likely) `atof` were compiled separately, the mismatch would not be detected, `atof` would return a `double` that `main` would treat as an `int`, and meaningless answers would result.
+- But it's a bad idea to use it with new programs. If the function takes arguments, declare them; if it takes no arguments, use `void`.
+- `return atof(s);` potentially discard information, however, so some compilers warn of it.
+- `return (int) atof(s);` the cast states explicitly that the operation is intended, and suppresses any warning.
+### 4.3 External variables
+- Internal arguments and variables are defined inside functions.
+- External variables are defined outside of any function, and are thus potentially available to many functions. Functions themselves are always external, because C does not allow functions to be defined inside other functions.
+- Automatic variables are internal to a function; they come into existence when the function is entered, and disappear when it is left. External variables, on the other hand, are permanent, so they retain values from one function invocation to the next.
+- Thus, if two functions must share some data, yet neither calls the other, it is often most convenient if the shared data is kept in external variable rather than passed in and out via arguments.
+### 4.4 Scope Rules
+- The *scope* of a name is the part of the program within which the name can be used. For an automatic or local variable declared in the function, the scope is the function in which the name is declared. The scope of an external variable or a function lasts from the point at which it is declared to the end of the file being compiled.
+- If an external variable is to be referred to before it is defined, or if it is defined in a different source file from the one where it is being used, then an `extern` declaration is mandatory.
+- The *declaration* of an external variable announces the properties of a variable; the *definition* also causes storage to be set aside.
+- There must be only one *definition* of an external variable among all the files that make up the source program; other files may contain `extern` declarations to access it. Array sizes must be specified with the definition, but are optional with an `extern` declaration.
+### 4.5 Header Files
+- There is one more thing to worry about - the definitions and declarations shared among the files. As much as possible, we want to ce ntralize this, so that there is only one copy to get right and keep right as the program involves.  Accordingly, we will place this common material in a *header file*, which will be included as necessary.
+- Up to moderate program size, it is probably best to have one header file that contains everything that is to be shared between any two parts of the program. For a much larger program, more organization and more headers would be needed.
+### 4.6 Static Variables
+- The *static* declaration, applied to an external variable or function, limits the scope of that object to the rest of the source file being compiled. 
+- Static storage is specified by prefixing the normal declaration with the word `static`. If the two routines and the two variables are compiled in one file, as in the no other routine will be able to access them, and those names will not conflict with the same names in other files of the same program.
+- The external `static` declaration can be applied to functions as well and the applied function's name is invisible outside of the file in which it is declared.
+- The `static` declaration can also be applied to internal variables, and the applied internal static variables are local to a particular function, but unlike automatics, they remain in existence rather than coming and going each time the function is activated. This means that internal `static` variables provide private, permanent storage within a single function.
+### 4.7 Register Variables
+- A *register* declaration advises the compiler that the variable in question will be heavily used. The idea is that register variables are to be placed in machine registers, which may result in smaller and faster programs. But compilers are free to ignore the advice.
+- The `register` declaration can only be applied to automatic variables and to the formal parameters of a function.
+```
+f(register unsigned n, register long) 
+{
+   register int i;
+   ...
+}
+```
+- Only a few variables in each function may be kept in registers, and only certain types are allowed. It is not possible to take the address of a register variables, regardless of whether the variable is actually placed in register.
+### 4.8 Block Structure
+- C is not a block-structured language, because functions may not be defined within other functions. On the other hand, variables can be defined in a block-structured fashion within a function.
+- An automatic variable declared and initialized in a block is initialized each time the block is entered. A static variable is initialized only the first time the block is entered.
+- Automatic variables, including formal parameters, also hide external variables and functions of the same name.
+### 4.9 Initialization
+- In the absence of explicit initialization, external and static variables are guaranteed to be initialized to zero; automatic and register variables have undefined (i.e. garbage) initial values.
+- For external and static variables, the initializer must be a constant expression; for automatic and register variables, the initializer is not restricted to being a constant.
+- When an automatic array has no initializers at all, then it contains garbage, just as simple automatic variables do.
+- `char pattern[] = "ould";` is is equivalent to `char pattern[] = { 'o', 'u', 'l', 'd', '\0' };`.
+### 4.10 Recursion
+- C functions may be used recursively; that is, a function may call itself either directly or indirectly. 
+- Recursion may provide no saving in storage, since somewhere a stack of the values being processed must be maintained. Nor it will be faster.
+### 4.11 The C Preprocessor
+- C provides certain language facilities by means of a preprocessor, which is conceptually a separate first step in compilation.
+#### 4.11.1 File Inclusion
+- File inclusion makes it easy to handle collections of `#define`s and declarations among other things. Any source line of the form `#include "filename"` or `#include <filename>` is replaced by the contents of the file `filename`.
+- `#include` is the preferred way to tie the declarations together for a large program. It guarantees that all the source files will be supplied with the same definitions and variable declarations, and thus eliminates a particularly nasty kind of bug. Naturally, when an included file is changed, all files that depend on it must be recompiled.
+#### 4.11.2 Macro Substitution
+- `#define name  replacement text` calls for a macro substitution of the simplest kind - subsequent occurrences of the token `name` will be replaced by the `replacement text`.
+- The scope of a name defined with `#define` is from its point of definition to the end of the source file being compiled.
+- It is also possible to define macros with arguments, so the replacement text can be different for different calls of the macro: `#define max(A, B) ((A) > (B) ? (A) : (B))`.
+- Names may be undefined with `#undef`, usually to ensure that a routine is really a function, not a macro.
+#### 4.11.3 Conditional Inclusion
+- It is possible to control preprocessing itself with conditional statements that are evaluated during preprocessing. The `#if` line evaluates a constant integer expression, if the expression is non-zero, subsequent lines until an `#endif` or `#elif` or `#else` are included.
+- The expression `defined(name)` in a `#if` is 1 if the `name` has been defined, and 0 otherwise.
+- The `#ifdef` and `#ifndef` lines are specialized forms that test whether a name is defined.
+```c
+#if !defined(HDR)
+#define HDR
+...
+#endif
+
+#ifndef HDR
+#define HDR
+...
+#endif
+```
