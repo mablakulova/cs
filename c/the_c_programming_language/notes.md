@@ -280,3 +280,41 @@ f(register unsigned n, register long)
 ...
 #endif
 ```
+## Chapter 5 Pointers and Arrays
+### 5.1 Pointers and Addresses
+- A *pointer* is a group of cells (often two or four) that can hold an address. The unary operator `&` ("ampersand") gives the address of an object.
+- The `&` operator only applies to objects in memory: variables and array elements. It cannot be applied to expressions, constants, or register variables.
+- The unary operator `*` ("asterisk") is the *indirection* or *dereferencing* operator; when applied to a pointer, it accesses the object the pointer points to.
+- In `(*ip)++` expression, the parentheses are necessary, without them, the expression would increment `ip` instead of what it points to, because unary operators like `*` and `++` associate right to left.
+### 5.2 Pointers and Function Arguments
+- Since C passes arguments to functions by value, there is no direct way for the called function to alter a variable in the calling function. The called function only uses *copies* of the calling functions' arguments.
+- *Pointer* arguments enable a function to access and change objects in the function that called it.
+### 5.3 Pointers and Arrays
+- If `pa` points to a particular element of an array, then by definition `pa+1` points to the next element, `pa+i` points `i` element after `pa`, and `pa-i` points i elements before.
+- These remarks are true regardless of the type or size of the variable in the array `a`. The meaning of "adding 1 to a pointer", and by extension, all pointer arithmetic, is that `pa+1` points to the next object, and `pa+i` points to the `i`-th object beyond `pa`.
+- The correspondence between indexing and pointer arithmetic is very close. By definition, the value of a variable or expression of type array is the address of element zero of the array. 
+- When an array name is passed to a function, what is passed is the location of the initial element. Within the called function, this argument is a local variable. and so an array name parameter is a pointer, that is, a variable containing an address.
+- As *formal parameters* in a function definition, `char s[]` and `char *s` are equivalent.
+### 5.4 Address Arithmetic
+- Pointers and integers are interchangeable. *Zero* is the sole exception: the constant zero may be assigned to a pointer, and a pointer may be compared with the constant zero. The symbolic constant `NULL` is often used in place of zero, as a mnemonic to indicate more clearly that this is a special value for a pointer. `NULL` is defined in `<stdio.h>`.
+- Pointers may be compared under certain circumstances. If `p` and `q` point to members of the same array, then relations like `==`, `!=`, `<`, `>=`, etc., work properly. But the behavior is undefined for arithmetic or comparisons with pointers that do not point to members of the same array. (There is one exception: the address of the first element past the end of an array can be used in pointer arithmetic.)
+### 5.5 Character Pointers and Functions
+- C does not provide any operators for processing an entire string of characters as a unit.
+- Individual characters within the array may be changed but `amessage` will always refer to the same storage. On the other hand, `pmessage` is a pointer, initialized to point to a string constant; the pointer may subsequently be modified to point elsewhere, but the result is undefined if you try to modify the string contents.
+- The first function is `strcpy(s,t)`, which copies the string `t` to the string `s`. It would be nice just to say `s=t` but this copies the pointer, not the characters. To copy the characters, we need a loop.
+### 5.6 Pointer Arrays; Pointers to Pointers
+- Since pointers are variables themselves, they can be stored in arrays just as other variables can.
+- The pointers themselves can be stored in an array. Two lines can be compared by passing their pointers to `strcmp`. When two out-of-order lines have to be exchanged, the pointers in the pointer array are exchanged, not the text lines themselves.
+### 5.7 Multi-dimensional Arrays
+- In C, a two-dimensional array is really a one-dimensional array, each of whose elements is an array. Hence subscripts are written as `arr[i][j] /* [row][col] */` .
+- If a two-dimensional array is to be passed to a function, the parameter declaration in the function must include the number of columns; the number of rows is irrelevant, since what is passed is, as before, a pointer to an array of rows. Example: `f(int arr[2][13]) { ... }`, `f(int arr[][13]) { ... }`, `f(int (*arr)[13] { ... }`. 
+- The parentheses are necessary since brackets `[]` have higher precedence than `*`. Without parentheses, the declaration `f(int *arr[13] { ... }` is an array of 13 pointers to integers. More generally, only the first dimension (subscript) of an array is free; all the others have to be specified.
+### 5.9 Pointers vs. Multi-dimensional Arrays
+- The important advantage of the pointer array is that the rows of the array may be of different lengths.
+### 5.10 Command-line Arguments
+- In environments that support C, there is a way to pass command-line arguments or parameters to a program when it begins executing. When `main` is called, it is called with two arguments. The first (conventionally called `argc`, for argument count) is the number of command-line arguments the program was invoked with; the second (`argv`, for argument vector) is a pointer to an array of character strings that contain the arguments, one per string.
+- By convention, `argv[0]` is the name by which the program was invoked, so `argc` is at least 1. The first optional argument is `argv[1]` and the last is `argv[argc-1]`; additionally, the standard requires that `argv[argc]` be a null pointer.
+### 5.11 Pointers to Functions
+- In C, a function is not a variable, but it is possible to define pointers to functions, which can be assigned, placed in arrays, passed to functions, returned by functions, and so on.
+- `void *` is a generic pointer type. Any pointer can be cast to `void *` and back again without loss of information.
+- `int (*comp)(void *, void *)` says that `comp` is a pointer to a function that has two `void *` arguments and returns an `int`. The parentheses are needed so the components are correctly associated; without them, `int *comp(void *, void *)` says that `comp` is a function returning a pointer to an `int`, which is very different.
